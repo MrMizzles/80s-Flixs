@@ -16,11 +16,10 @@ http.createServer((request, response) => {
         } else {
           console.log("Added to log.");
         }
-      }
-    );
+      });
 
     if (q.pathname.includes("documentation")) {
-      filePath = __dirname + "/documentation.html";
+      filePath = (__dirname + "/documentation.html");
     } else {
       filePath = "index.html";
     }
@@ -34,7 +33,6 @@ http.createServer((request, response) => {
       response.write(data);
       response.end();
     });
-  })
-  .listen(8080);
+  }).listen(8080);
 
 console.log("My first Node test server is running on Port 8080.");
