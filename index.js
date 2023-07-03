@@ -1,60 +1,10 @@
 const express = require('express');
-    morgan = require('morgan'), 
-    fs = require('fs'), // import built in node modules fs and path
-    path = require('path');
-
+const morgan = require('morgan'); 
+const fs = require('fs'); // import built in node modules fs and path
+const path = require('path');
 const http = require('http');
-    url = require('url');
-
+const url = require('url');
 const app = express();
-
-// create a write stream (in append mode)
-// a ‘log.txt’ file is created in root directory
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
-
-// Sets up Logger
-app.use(morgan('combined', {stream: accessLogStream}));
-
-// This Serves the statics files in the "public" folder
-app.use(express.static('public'));
-
-// Get requests
-app.get('/', (req, res) => {
-    res.send('Welcome to the Breakfast Club!')
-});
-
-app.get('/documentation', (req, res) => {
-    res.sendFile('public/documentation.html', { root:__dirname });
-});
-
-app.get('/movies', (req, res) => {
-    res.json(topMovies);
-});
-
-// Creating error-handling that log all errors to terminal
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Ups, something went wrong!');
-  });
-
-// Listens for requests
-app.listen(8080, () => {
-    console.log('Your app is listening on port 8080');
-});
-
-http.createServer((request, response) => {
-    let requestURL = url.parse(request.url, true);
-    if ( requestURL.pathname == '/documentation.html'); {
-        response.writeHead(200, {'Content-Type': 'text/plain'});
-        response.end('Documentation on the 80s Flixs API.\n');
-    } else {
-        response.writeHead(200, {'Content-Type': 'text/plain'});
-        response.end('Welcome to the 80s Flixs API!');
-    }
-
-    }).listen(8080);
-
-    console.log('80s Flixs API is running on Port 8080.');
 
 let topMovies = [
     {
@@ -149,6 +99,16 @@ let topMovies = [
     },
 ];
 
+// create a write stream (in append mode)
+// a ‘log.txt’ file is created in root directory
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+
+// Sets up Logger
+app.use(morgan('combined', {stream: accessLogStream}));
+
+// This Serves the statics files in the "public" folder
+app.use(express.static('public'));
+
 // Get requests
 app.get('/', (req, res) => {
     res.send('Welcome to the Breakfast Club!');
@@ -162,7 +122,27 @@ app.get('/movies', (req, res) => {
     res.json(topMovies);
 });
 
-// Listen for requests
+// Creating error-handling that log all errors to terminal
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
+
+// Listens for requests
 app.listen(8080, () => {
-    console.log('Your app is listening on port 8080');
+    console.log('80s Flixs app is listening on port 8080');
 });
+
+http.createServer((request, response) => {
+    let requestURL = url.parse(request.url, true);
+    if (requestURL.pathname == '/documentation.html'); {
+        response.writeHead(200, {'Content-Type': 'text/plain'});
+        response.end('Documentation on the 80s Flixs API.\n');
+    } else {
+        response.writeHead(200, {'Content-Type': 'text/plain'});
+        response.end('Welcome to the 80s Flixs API!');
+    }
+
+    }).listen(8080);
+
+    console.log('80s Flixs API is running on Port 8080.');
