@@ -1,3 +1,15 @@
+const mongoose = require("mongoose");
+const Models = require("./models.js");
+
+const Movies = Models.Movie;
+const Users = Models.User;
+const Actors = Models.Actor;
+
+mongoose.connect("mongodb://localhost:27017/80sFlixDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
 const express = require("express");
 const morgan = require("morgan");
 const fs = require("fs");
@@ -7,120 +19,10 @@ const path = require("path");
 const http = require("http");
 const url = require("url");
 const { create } = require("domain");
-app = express();
+const app = express();
 
 app.use(bodyParser.json());
-
-let users = [
-  {
-    id: "1",
-    name: "Marshall",
-    favoriteMovies: ["Raiders of the Lost Ark"],
-  },
-];
-
-let movies = [
-  {
-    title: "Raiders of the Lost Ark",
-    year: "1981",
-    genre: { Name: "Action/Adventure" },
-    plot: "A globetrotting archaeologist and college professor vying with Nazi German forces to recover the long-lost Ark of the Covenant which is said to make an army invincible. Teaming up with his tough former romantic interest Marion Ravenwood (Karen Allen), Indiana Jones races to stop rival archaeologist Dr. René Belloq (Paul Freeman) from guiding the Nazis to the Ark and its power.",
-    duration: "115 mins",
-    director: { Name: "Steven Spielberg" },
-    screenwriter: "Lawrence Kasdan",
-    cast: "Harrison Ford, Karen Allen, Paul Freeman, Ronald Lacey, John Rhys-Davies, Denholm Elliott, Alfred Molina, Wolf Kahler",
-  },
-  {
-    title: "Platoon",
-    year: "1981",
-    genre: { Name: "War" },
-    plot: "The film, based on Stone's experience from the war, follows a U.S. Army volunteer (Sheen) serving in Vietnam while his Platoon Sergeant and his Squad Leader (Berenger and Dafoe) argue over the morality in the platoon and of the war itself.",
-    duration: "120 minutes",
-    director: { Name: "Oliver Stone" },
-    screenwriter: "Oliver Stone",
-    cast: "Tom Berenger, Willem Dafoe, Charlie Sheen",
-  },
-  {
-    title: "Escape From New York",
-    year: "1981",
-    genre: { Name: "Science Fiction/Action" },
-    plot: "Set in the near-future world of 1997, concerns a crime-ridden United States, which has converted Manhattan Island in New York City into the country's sole maximum security prison. Air Force One is hijacked by anti-government insurgents who deliberately crash it into the walled borough. Ex-soldier and current federal prisoner Snake Plissken (Russell) is given just 24 hours to go in and rescue the President of the United States, after which, if successful, he will be pardoned.",
-    duration: "99 minutes",
-    director: { Name: "John Carpenter" },
-    screenwriter: "John Carpenter",
-    cast: "Kurt Russell, Lee Van Cleef, Ernest Borgnine, Donald Pleasence, Isaac Hayes, Harry Dean Stanton, Adrienne Barbeau",
-  },
-  {
-    title: "Ghostbusters",
-    year: "1984",
-    genre: { Name: "Comedy" },
-    plot: "three eccentric parapsychologists who start a ghost-catching business in New York City.",
-    duration: "105 minutes",
-    director: { Name: "Ivan Reitman" },
-    screenwriter: "Dan Aykroyd, Harold Ramis",
-    cast: "Bill Murray, Dan Aykroyd, Sigourney Weaver, Harold Ramis, Rick Moranis",
-  },
-  {
-    title: "Lethal Weapon",
-    year: "1987",
-    genre: { Name: "Buddy Cop/Action/Comedy" },
-    plot: "A pair of mismatched LAPD detectives, Martin Riggs, a former Green Beret who has become suicidal following the death of his wife and veteran officer and family man Roger Murtaugh work together as partners.",
-    duration: "112 minutes",
-    director: { Name: "Richard Donner" },
-    screenwriter: "Shane Black",
-    cast: "Mel Gibson, Danny Glover, Gary Busey",
-  },
-  {
-    title: "Die Hard",
-    year: "1988",
-    genre: { Name: "Action" },
-    plot: "Die Hard follows New York City police detective John McClane, who is caught up in a terrorist takeover of a Los Angeles skyscraper while visiting his estranged wife.",
-    duration: "132 minutes",
-    director: { Name: "John McTiernan" },
-    screenwriter: "Jeb Stuart, Steven E. de Souza",
-    cast: "Bruce Willis, Alan Rickman, Alexander Godunov, Bonnie Bedelia",
-  },
-  {
-    title: "Stand by Me",
-    year: "1986",
-    genre: { Name: "Independent/Coming-Of-Age/Comedy-Drama" },
-    plot: "the film is set in the fictional town of Castle Rock, Oregon in 1959 and tells a story about four friends who go on a hike to find the dead body of a missing boy.",
-    duration: "89 minutes",
-    director: { Name: "Rob Reiner" },
-    screenwriter: "Bruce A. Evans, Raynold Gideon",
-    cast: "Wil Wheaton, River Phoenix, Corey Feldman, Jerry O'Connell, Kiefer Sutherland",
-  },
-  {
-    title: "The Thing",
-    year: "1982",
-    genre: { Name: "Science-Fiction/Horror" },
-    plot: 'it tells the story of a group of American researchers in Antarctica who encounter the eponymous "Thing", an extraterrestrial life-form that assimilates, then imitates, other organisms. The group is overcome by paranoia and conflict as they learn that they can no longer trust each other and that any of them could be the Thing.',
-    duration: "109 minutes",
-    director: { Name: "John Carpenter" },
-    screenwriter: "Bill Lancaster",
-    cast: "Kurt Russell, Wilford Brimley, T.K. Carter, David Clennon, Keith David, Richard Dysart, Charles Hallahan, Peter Maloney",
-  },
-  {
-    title: "Back to the Future",
-    year: "1985",
-    genre: { Name: "Science-Fiction" },
-    plot: 'a teenager accidentally sent back to 1955 in a time-traveling DeLorean automobile built by his eccentric scientist friend Emmett "Doc" Brown (Lloyd), where he inadvertently prevents his future parents from falling in love threatening his own existence.  He is forced to reconcile them and somehow get back to the future.',
-    duration: "115 minutes",
-    director: { Name: "Robert Zemeckis" },
-    screenwriter: "Robert Zemeckis, Bob Gale",
-    cast: "Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover",
-  },
-  {
-    title: "The Terminator",
-    year: "1984",
-    genre: { Name: "Science-Fiction/Action" },
-    plot: "Disguised as a human, a cyborg assassin known as a Terminator (Arnold Schwarzenegger) travels from 2029 to 1984 to kill Sarah Connor (Linda Hamilton). Sent to protect Sarah is Kyle Reese (Michael Biehn), who divulges the coming of Skynet, an artificial intelligence system that will spark a nuclear holocaust.",
-    duration: "107 minutes",
-    director: { Name: "James Cameron" },
-    screenwriter: "James Cameron, Gale Anne Hurd",
-    cast: "Arnold Schwarzenegger, Michael Biehn, Linda Hamilton, Paul Winfield",
-  },
-];
+app.use(express.urlencoded({ extended: true }));
 
 // create a write stream (in append mode)
 // a ‘log.txt’ file is created in root directory
@@ -137,139 +39,226 @@ app.use(express.static("public"));
 // Get requests
 
 // Returns welcome message
-
 app.get("/", (req, res) => {
   res.send("Welcome to 80's Flix!");
 });
 
 // Returns API documentation
-
 app.get("/documentation", (req, res) => {
   res.sendFile("public/documentation.html", { root: __dirname });
 });
 
 // CREATE. Create a new user
+/* We’ll expect JSON in this format
+{
+  ID: Integer,
+  Username: String,
+  Password: String,
+  Email: String,
+  Birthday: Date
+}*/
+app.post("/users", async (req, res) => {
+  await Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + "already exists");
+      } else {
+        Users.create({
+          Username: req.body.Username,
+          Password: req.body.Password,
+          Email: req.body.Email,
+          Birthday: req.body.Birthday,
+        })
+          .then((user) => {
+            res.status(201).json(user);
+          })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send("Error: " + error);
+          });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send("Error: " + error);
+    });
+});
 
-app.post("/users", (req, res) => {
-  const newUser = req.body;
+// READ. Return list of users
+app.get("/users", async (req, res) => {
+  await Users.find()
+    .then((user) => {
+      res.status(201).json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
 
-  if (newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).send("Users need names!");
-  }
+// READ. Get a user by username
+app.get("/users/:Username", async (req, res) => {
+  await Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // UPDATE. Update username
-
-app.put("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedUser = req.body;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.name = updatedUser.name;
-    res.status(200).json(user);
-  } else {
-    res.status(400).send("No such user");
-  }
+// Update a user's info, by username
+/* We’ll expect JSON in this format
+{
+  Username: String,
+  (required)
+  Password: String,
+  (required)
+  Email: String,
+  (required)
+  Birthday: Date
+}*/
+app.put("/users/:Username", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $set: {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday,
+      },
+    },
+    { new: true }
+  )
+    // This line makes sure that the updated document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // DELETE.  Unregister user
 
-app.delete("/users/:id/", (req, res) => {
-  const { id } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    users = users.filter((user) => user.id != id);
-    res.status(200).send(`User ${id} has been deleted`);
-  } else {
-    res.status(400).send("No such user");
-  }
+app.delete("/users/:Username", async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + " was not found!");
+      } else {
+        res.status(200).send(req.params.Username + " was deleted.");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// POST.  Update user's favorite movie list
-
-app.put("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.favoriteMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added ${id}'s array`);
-  } else {
-    res.status(400).send("Movie was not added");
-  }
+// POST.  Add a movie to user's favorite movie list
+app.post("/users/:Username/movies/:MovieID", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $push: { FavoriteMovies: req.params.MovieID },
+    },
+    { new: true }
+  ) // This line makes sure that the updated document is returned.
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // DELETE. Delete user movie
 
-app.delete("/users/:id/:movieTitle", (req, res) => {
-  const { id, movieTitle } = req.params;
-
-  let user = users.find((user) => user.id == id);
-
-  if (user) {
-    user.favoriteMovies = user.favoriteMovies.filter(
-      (title) => title !== movieTitle
-    );
-    res.status(200).send(`${movieTitle} has been removed ${id}'s array`);
-  } else {
-    res.status(400).send("Movie was not removed");
-  }
-});
-
-// READ. Returns list of movies
-
-app.get("/movies", (req, res) => {
-  res.status(200).json(movies);
+app.delete("/users/:Username/movies/:MovieID", async (req, res) => {
+  await Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $pull: { FavoriteMovies: req.params.MovieID },
+    },
+    { new: true }
+  ) // This line makes sure that the updated document is returned.
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // READ. Returns a list of movies
 
-app.get("/movies", (req, res) => {
-  res.status(200).json(movies);
+app.get("/movies", async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(200).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // READ. Returns data about movie by title
 
-app.get("/movies/:title", (req, res) => {
-  const { title } = req.params;
-  const movie = movies.find((movie) => movie.title === title);
+app.get("/movies/:Title", async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
 
-  if (movie) {
-    return res.status(200).json(movie);
-  } else {
-    res.status(400).send("No such movie!");
-  }
+    .then((movies) => {
+      res.status(200).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
-// READ. Return a director by name
+app.get("/users/:Username", async (req, res) => {
+  await Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
+});
 
-app.get("/movies/directors/:director", (req, res) => {
-  movies.find({ "director.name": req.params.director }).then((movies) => {
-    res.status(201).json(movie.director);
-    return movies.director === req.params.director;
-  });
+// READ. Return info of director by name
+
+app.get("/movies/director/:directorName", async (req, res) => {
+  Movies.findOne({ "Director.Name": req.params.directorName })
+    .then((movie) => {
+      res.json(movie.Director);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // READ. Return a genre by name
 
-app.get("/movies/genre/:genreName", (req, res) => {
-  const { genreName } = req.params;
-  const genre = movies.find((movie) => movie.genre.Name === genreName).genre;
-
-  if (genre) {
-    return res.status(200).json(genre);
-  } else {
-    res.status(400).send("No such genre!");
-  }
+app.get("/movies/genre/:genreName", async (req, res) => {
+  Movies.findOne({ "Genre.Name": req.params.genreName })
+    .then((movie) => {
+      res.json(movie.Genre);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // READ. Return a director data by name
@@ -297,15 +286,3 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
   console.log("80s Flixs app is listening on port 8080");
 });
-
-//http.createServer((request, response) => {
-// let requestURL = url.parse(request.url, true);
-// if (requestURL.pathname == '/documentation.html'); {
-//     response.writeHead(200, {'Content-Type': 'text/plain'});
-//     response.end('Documentation on the 80s Flixs API.\n');
-// } else {
-//     response.writeHead(200, {'Content-Type': 'text/plain'});
-//     response.end('Welcome to the 80s Flixs API!');
-// }
-
-// }).listen(8080);
