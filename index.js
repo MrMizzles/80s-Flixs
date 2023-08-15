@@ -9,14 +9,10 @@ const Models = require("./models.js");
 const { check, validationResult } = require("express-validator");
 
 // Connect Mongoose to db
-// mongoose.connect("mongodb://localhost:27017/80sFlixDB", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-mongoose.connect(
-  "mongodb+srv://MrMizzles:Henryisthebest603@cluster0.jzts6lx.mongodb.net/myFlixDB?retryWrites=true&w=majority",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect("mongodb://localhost:27017/80sFlixDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Import Mongoose models
 const app = express(),
