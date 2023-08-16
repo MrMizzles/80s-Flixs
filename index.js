@@ -15,13 +15,10 @@ const { check, validationResult } = require("express-validator");
 // });
 
 // Online Connect to Mongo
-mongoose.connect(
-  "mongodb+srv://MrMizzles:Henryisthebest603@cluster0.jzts6lx.mongodb.net/myFlixDB?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Import Mongoose models
 const app = express(),
