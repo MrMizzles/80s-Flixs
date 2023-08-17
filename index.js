@@ -157,7 +157,7 @@ app.get(
   }
 );
 
-// UPDATE. Update username
+// UPDATE. Update user info
 // Update a user's info, by username
 /* We’ll expect JSON in this format
 {
@@ -200,7 +200,7 @@ app.put(
       {
         $set: {
           Username: req.body.Username,
-          Password: req.body.Password,
+          Password: hashedPassword,
           Email: req.body.Email,
           Birthday: req.body.Birthday,
         },
@@ -222,8 +222,22 @@ app.put(
 
 app.delete(
   "/users/:Username",
+  [
+    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters - not allowed."
+    ).isAlphanumeric(),
+    check("Password", "Password is required").not().isEmpty(),
+  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // Check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
     }
@@ -245,8 +259,22 @@ app.delete(
 // POST.  Add a movie to user's favorite movie list
 app.post(
   "/users/:Username/:MovieID",
+  [
+    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters - not allowed."
+    ).isAlphanumeric(),
+    check("Password", "Password is required").not().isEmpty(),
+  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // Check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     // Condition to check added here
     if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
@@ -272,8 +300,22 @@ app.post(
 
 app.delete(
   "/users/:Username/:MovieID",
+  [
+    check("Username", "Username is required").isLength({ min: 5 }),
+    check(
+      "Username",
+      "Username contains non alphanumeric characters - not allowed."
+    ).isAlphanumeric(),
+    check("Password", "Password is required").not().isEmpty(),
+  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
+    // Check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
       {
