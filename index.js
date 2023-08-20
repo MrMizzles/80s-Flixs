@@ -53,14 +53,9 @@ app.use(express.static("public"));
 
 // Endpoints and handling functions
 
-// Home/Index
+// Home/Index page
 app.get("/", (req, res) => {
-  res.sendFile("public/index.html", { root: __dirname });
-});
-
-// Returns API documentation
-app.get("/documentation", (req, res) => {
-  res.sendFile("public/documentation.html", { root: __dirname });
+  res.send("Welcome to the 80s Flixs app!");
 });
 
 // CREATE. Create a new user
