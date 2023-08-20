@@ -222,14 +222,6 @@ app.put(
 
 app.delete(
   "/users/:Username",
-  [
-    check("Username", "Username is required").isLength({ min: 5 }),
-    check(
-      "Username",
-      "Username contains non alphanumeric characters - not allowed."
-    ).isAlphanumeric(),
-    check("Password", "Password is required").not().isEmpty(),
-  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // Check the validation object for errors
@@ -258,15 +250,7 @@ app.delete(
 
 // POST.  Add a movie to user's favorite movie list
 app.post(
-  "/users/:Username/:MovieID",
-  [
-    check("Username", "Username is required").isLength({ min: 5 }),
-    check(
-      "Username",
-      "Username contains non alphanumeric characters - not allowed."
-    ).isAlphanumeric(),
-    check("Password", "Password is required").not().isEmpty(),
-  ],
+  "/users/:Username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // Check the validation object for errors
@@ -300,14 +284,6 @@ app.post(
 
 app.delete(
   "/users/:Username/:MovieID",
-  [
-    check("Username", "Username is required").isLength({ min: 5 }),
-    check(
-      "Username",
-      "Username contains non alphanumeric characters - not allowed."
-    ).isAlphanumeric(),
-    check("Password", "Password is required").not().isEmpty(),
-  ],
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // Check the validation object for errors
