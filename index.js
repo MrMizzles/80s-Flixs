@@ -283,7 +283,7 @@ app.post(
 // DELETE. Delete user movie
 
 app.delete(
-  "/users/:Username/:MovieID",
+  "/users/:Username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     // Check the validation object for errors
