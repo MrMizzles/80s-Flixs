@@ -36,17 +36,10 @@ app.use(cors());
 // Authentification & Login Endpoint
 let auth = require("./auth")(app); // Login HTML Authentification
 const passport = require("passport"); // JWT Authentification
-const { resourceLimits } = require("worker_threads");
 require("./passport");
 
-// create a write stream (in append mode)
-// a ‘log.txt’ file is created in root directory
-const accessLogStream = fs.createWriteStream(path.join(__dirname, "log.txt"), {
-  flags: "a",
-});
-
 // Sets up Logger
-app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("common"));
 
 // This Serves the statics files in the "public" folder
 app.use(express.static("public"));
