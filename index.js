@@ -299,67 +299,83 @@ app.delete(
 );
 
 // READ. Returns a list of movies
-app.get("/movies", async (req, res) => {
-  if (req.user.Username !== req.user.Username) {
-    return res.status(400).send("Permission denied");
+app.get(
+  "/movies",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    if (req.user.Username !== req.user.Username) {
+      return res.status(400).send("Permission denied");
+    }
+    await Movies.find()
+      .then((movies) => {
+        res.status(200).json(movies);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
   }
-  await Movies.find()
-    .then((movies) => {
-      res.status(200).json(movies);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-});
+);
 
 // READ. Returns movie by title
-app.get("/movies/:Title", async (req, res) => {
-  if (req.user.Username !== req.user.Username) {
-    return res.status(400).send("Permission denied");
-  }
-  await Movies.findOne({ Title: req.params.Title })
+app.get(
+  "/movies/:Title",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    if (req.user.Username !== req.user.Username) {
+      return res.status(400).send("Permission denied");
+    }
+    await Movies.findOne({ Title: req.params.Title })
 
-    .then((movies) => {
-      res.status(200).json(movies);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-});
+      .then((movies) => {
+        res.status(200).json(movies);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
+  }
+);
 
 // READ. Return info of director by name
 
-app.get("/movies/director/:directorName", async (req, res) => {
-  if (req.user.Username !== req.user.Username) {
-    return res.status(400).send("Permission denied");
+app.get(
+  "/movies/director/:directorName",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    if (req.user.Username !== req.user.Username) {
+      return res.status(400).send("Permission denied");
+    }
+    Movies.findOne({ "Director.Name": req.params.directorName })
+      .then((movie) => {
+        res.json(movie.Director);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
   }
-  Movies.findOne({ "Director.Name": req.params.directorName })
-    .then((movie) => {
-      res.json(movie.Director);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-});
+);
 
 // READ. Return a genre by name
 
-app.get("/movies/genre/:genreName", async (req, res) => {
-  if (req.user.Username !== req.user.Username) {
-    return res.status(400).send("Permission denied");
+app.get(
+  "/movies/genre/:genreName",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    if (req.user.Username !== req.user.Username) {
+      return res.status(400).send("Permission denied");
+    }
+    Movies.findOne({ "Genre.Name": req.params.genreName })
+      .then((movie) => {
+        res.json(movie.Genre);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
   }
-  Movies.findOne({ "Genre.Name": req.params.genreName })
-    .then((movie) => {
-      res.json(movie.Genre);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-});
+);
 
 // Creating error-handling that log all errors to terminal
 app.use((err, req, res, next) => {
