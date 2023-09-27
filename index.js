@@ -112,7 +112,7 @@ app.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.user.Username) {
+    if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
     }
     await Users.find()
@@ -249,7 +249,7 @@ app.post(
     }
     // Condition to check added here
     if (req.user.Username !== req.params.Username) {
-      return res.status(400).send("Permission denied");
+      return res.status(404).send("Permission denied");
     }
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -303,7 +303,7 @@ app.get(
   "/movies",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.user.Username) {
+    if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
     }
     await Movies.find()
@@ -322,7 +322,7 @@ app.get(
   "/movies/:Title",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.user.Username) {
+    if (req.user.Username !== req.params.Username) {
       return res.status(400).send("Permission denied");
     }
     await Movies.findOne({ Title: req.params.Title })
@@ -343,7 +343,7 @@ app.get(
   "/movies/director/:directorName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.user.Username) {
+    if (!req.user?.Username) {
       return res.status(400).send("Permission denied");
     }
     Movies.findOne({ "Director.Name": req.params.directorName })
@@ -363,7 +363,7 @@ app.get(
   "/movies/genre/:genreName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.user.Username) {
+    if (!req.user?.Username) {
       return res.status(400).send("Permission denied");
     }
     Movies.findOne({ "Genre.Name": req.params.genreName })
