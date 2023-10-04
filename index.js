@@ -343,7 +343,7 @@ app.get(
   "/movies/director/:directorName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.params.Username) {
+    if (!req.user?.Username) {
       return res.status(400).send("Permission denied");
     }
     Movies.findOne({ "Director.Name": req.params.directorName })
@@ -363,7 +363,7 @@ app.get(
   "/movies/genre/:genreName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.params.Username) {
+    if (!req.user?.Username) {
       return res.status(400).send("Permission denied");
     }
     Movies.findOne({ "Genre.Name": req.params.genreName })
