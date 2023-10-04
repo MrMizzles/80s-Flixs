@@ -112,9 +112,6 @@ app.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.params.Username) {
-      return res.status(400).send("Permission denied");
-    }
     await Users.find()
       .then((user) => {
         res.status(201).json(user);
@@ -303,9 +300,6 @@ app.get(
   "/movies",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.params.Username) {
-      return res.status(400).send("Permission denied");
-    }
     await Movies.find()
       .then((movies) => {
         res.status(200).json(movies);
@@ -322,13 +316,9 @@ app.get(
   "/movies/:Title",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (req.user.Username !== req.params.Username) {
-      return res.status(400).send("Permission denied");
-    }
     await Movies.findOne({ Title: req.params.Title })
-
-      .then((movies) => {
-        res.status(200).json(movies);
+      .then((movie) => {
+        res.status(200).json(movie);
       })
       .catch((err) => {
         console.error(err);
@@ -343,9 +333,6 @@ app.get(
   "/movies/director/:directorName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (!req.user?.Username) {
-      return res.status(400).send("Permission denied");
-    }
     Movies.findOne({ "Director.Name": req.params.directorName })
       .then((movie) => {
         res.json(movie.Director);
@@ -363,9 +350,6 @@ app.get(
   "/movies/genre/:genreName",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    if (!req.user?.Username) {
-      return res.status(400).send("Permission denied");
-    }
     Movies.findOne({ "Genre.Name": req.params.genreName })
       .then((movie) => {
         res.json(movie.Genre);
